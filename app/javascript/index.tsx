@@ -1,8 +1,10 @@
+import 'antd/dist/antd.css';
+import './stylesheets/custom.css'
 import React from "react";
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
-import 'antd/dist/antd.css';
-import Routes from './routes/index';
+import { ApiProvider } from './components/api'
+import Routes from './routes';
 
 const App = () => {
   return (
@@ -15,5 +17,9 @@ const App = () => {
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("root");
   const root = createRoot(container!);
-  root.render(<App />);
+  root.render(
+    <ApiProvider>
+      <App />
+    </ApiProvider>
+  );
 });

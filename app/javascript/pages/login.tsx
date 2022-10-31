@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Form, Input } from "antd";
-import { Link } from 'react-router-dom';
+import { useHttpRequest } from '../components/api';
 
 const Login = () => {
+  const [loading , setLoading] = useState(false);
+  const http = useHttpRequest();
   const [form] = Form.useForm();
 
   const handleLogin = (values: any) => {
-    console.log('Received values of form: ', values);
+    setLoading(true);
+
+    http.post("/login", { 
+      user: values
+    }).then((result) => {
+      console.log(result);
+      setLoading(false);
+    }).catch((error) => {
+      console.log(error.message);
+      setLoading(false);
+    })
   };
+
 
   return (
     <div
@@ -22,14 +35,12 @@ const Login = () => {
       <Card title="Log in to your account" style={{ width: 350 }}>
         <Form
           form={form}
-          name="normal_login"
           className="login-form"
           initialValues={{ remember: true }}
-          // onFinish={handleLogin}
-          // onSubmit={(e: any) => e.preventDefault()}
+          onFinish={handleLogin}
         >
           <Form.Item
-            name="username"
+            name="email"
             rules={[
               {
                 required: true,
@@ -63,10 +74,9 @@ const Login = () => {
                 htmlType="submit"
                 block
                 className="login-form-button"
-                // loading={loading}
+                loading={loading}
               >
-                {/* Log in */}
-                <Link to={"/"}>Log In</Link>
+                Log in
               </Button>
             )}
           </Form.Item>

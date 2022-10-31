@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Routes, Route } from "react-router-dom";
-const Home = React.lazy(() => import('../pages/home'));
+const Home = React.lazy(() => import('./home'));
 const Loading = () => <p>Loading ...</p>;
 import { Link } from 'react-router-dom';
-import '../../stylesheets/custom.css'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
