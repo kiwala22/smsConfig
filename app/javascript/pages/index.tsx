@@ -1,64 +1,33 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { notification } from 'antd';
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-const Home = React.lazy(() => import('./home'));
+const Home = React.lazy(() => import("./home"));
 const Loading = () => <p>Loading ...</p>;
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
   BarChartOutlined,
   LogoutOutlined,
-} from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
-import { UserContext } from '..';
-import { useHttpRequest } from '../components/api';
+} from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+import { useAuthentication } from "../components/AuthProvider";
 
 const { Header, Sider, Content } = Layout;
 
 export default function Root(props: any) {
   const [collapsed, setCollapsed] = useState(false);
-  const history = useNavigate();
-  const userSession = useContext(UserContext);
-  const http = useHttpRequest();
-
-  useEffect(() => checkSessionExpiry(), []);
-
-  const checkSessionExpiry = () => {
-    console.log(userSession);
-    if (userSession?.message != "Authorized") {
-      history("/login")
-      notification.error({ message: "Unauthorized. Sign In First" })
-      // window.location.reload()
-    }
-    // console.log(userSession?.message);
-  }
-
-  const logout = () => {
-    http.delete('/users/sign_out')
-      .then((response) => {
-        history("/");
-        notification.success({ message: response?.message })
-        window.location.reload();
-      })
-      .catch((error) => {
-        notification.error({ message: error?.message })
-      });
-  }
+  const { logout } = useAuthentication();
 
   return (
     <>
       <Layout>
-        <Sider zeroWidthTriggerStyle={{ marginTop: 35 }} collapsible collapsed={collapsed}>
+        <Sider
+          zeroWidthTriggerStyle={{ marginTop: 35 }}
+          collapsible
+          collapsed={collapsed}
+        >
           <div className="logo" />
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={['/']}
-          >
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={["/"]}>
             <Menu.Item key="/" icon={<BarChartOutlined />}>
               <Link to={"/"}>Home</Link>
             </Menu.Item>
@@ -86,15 +55,18 @@ export default function Root(props: any) {
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-              className: 'trigger',
-              onClick: () => setCollapsed(!collapsed),
-            })}
+            {React.createElement(
+              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+              {
+                className: "trigger",
+                onClick: () => setCollapsed(!collapsed),
+              }
+            )}
           </Header>
           <Content
             className="site-layout-background"
             style={{
-              margin: '24px 16px',
+              margin: "24px 16px",
               padding: 24,
               minHeight: 800,
             }}
@@ -108,5 +80,5 @@ export default function Root(props: any) {
         </Layout>
       </Layout>
     </>
-  )
+  );
 }

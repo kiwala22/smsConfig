@@ -1,14 +1,31 @@
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
-const Login = React.lazy(() => import('./pages/login'));
-const Root = React.lazy(() => import('./pages/index'));
+import GuestGuard from "./components/GuestGuard";
+import AuthGuard from "./components/AuthGuard";
+const Login = React.lazy(() => import("./pages/login"));
+const Root = React.lazy(() => import("./pages/index"));
+
 const Loading = () => <p>Loading ...</p>;
 
 export default (
   <React.Suspense fallback={<Loading />}>
     <Routes>
-      <Route path="/login" element={<Login />}></Route>
-      <Route path="/" element={<Root />}></Route>
+      <Route
+        path="/login"
+        element={
+          <GuestGuard>
+            <Login />
+          </GuestGuard>
+        }
+      ></Route>
+      <Route
+        path="/"
+        element={
+          <AuthGuard>
+            <Root />
+          </AuthGuard>
+        }
+      />
     </Routes>
   </React.Suspense>
-)
+);

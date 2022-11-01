@@ -1,34 +1,32 @@
 import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Form, Input, notification } from "antd";
-import { useHttpRequest } from '../components/api';
-import { useNavigate } from 'react-router-dom';
+import { useHttpRequest } from "../components/api";
+import { useAuthentication } from "../components/AuthProvider";
 
 const Login = () => {
-  const [loading , setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { login: checkUserSession } = useAuthentication();
   const http = useHttpRequest();
   const [form] = Form.useForm();
-  const history = useNavigate();
 
   const handleLogin = (values: any) => {
     setLoading(true);
 
-    http.post("/sign_in", { 
-      user: values
-    }).then((result) => {
-      setLoading(false);
-      notification.success({ message: result?.message });
+    http
+      .post("/sign_in", {
+        user: values,
+      })
+      .then((result) => {
         setLoading(false);
-        setTimeout(() => {
-          history("/")
-          window.location.reload()
-        }, 2000);
-    }).catch((error) => {
-      console.log(error.message);
-      setLoading(false);
-    })
+        notification.success({ message: result?.message });
+        checkUserSession();
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setLoading(false);
+      });
   };
-
 
   return (
     <div
@@ -91,6 +89,6 @@ const Login = () => {
       </Card>
     </div>
   );
-}
+};
 
-export default Login
+export default Login;
