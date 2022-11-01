@@ -1,11 +1,20 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   devise_scope :user do
-    get "/login", to: "devise/sessions#new"
+    match 'login' => 'users/sessions#new', via: %i[get]
+    match 'sign_in' => 'users/sessions#create', via: %i[post]
   end
-  devise_for :users
-  root "home#index"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  devise_for :users, skip: [:registrations], controllers: {
+    sessions: 'users/sessions'
+  }
+  root 'home#index'
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  # API routes
+  namespace :api do
+    namespace :v2 do
+      match 'check_user' => 'current_user#check_current_user', via: [:get]
+      match 'home' => 'home#index', via: [:get]
+    end
+  end
 end

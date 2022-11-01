@@ -12,10 +12,14 @@ class HttpReq {
   constructor(baseUrl?: string) {
     this.axios = axios.create({
       baseURL: baseUrl,
-      headers: {
-        // 'Authorization': 'foobar'
-      }
+      headers: this.headers
     });
+  }
+
+  get headers() {
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    const csrfTokenContent = csrfToken?.getAttribute('content')
+    return { "X-CSRF-TOKEN": csrfTokenContent }
   }
 
   get(endpoint: string, variables?: IReqVars) {
